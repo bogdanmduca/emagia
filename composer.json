@@ -1,0 +1,26 @@
+{
+    "name": "bogdanmduca/emagia",
+    "description": "Emagia gameplay",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Bogdan Mihai Duca",
+            "email": "bogdan@ducalabs.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Emagia\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Emagia\\Tests\\": "tests/"
+        }
+    }
+    
+}
