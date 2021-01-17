@@ -1,0 +1,2 @@
+# emagia
+Emagia Game World
