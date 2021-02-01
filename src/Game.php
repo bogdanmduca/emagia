@@ -2,73 +2,41 @@
 
 namespace Emagia;
 
+use Emagia\Characters\Beast;
+use Emagia\Characters\Orderus;
+use Emagia\Skills\MagicShield;
+use Emagia\Skills\RapidStrike;
+
 class Game
 {
     public $battle;
 
-    public function initializeCPU()
-    {
-        $beast = new Character("Beast");
-        $health = new Stat("Health");
-        $health->setBoundaries(60, 90);
-        $beast->addStat($health);
-        $strength = new Stat("Strength");
-        $strength->setBoundaries(60, 90);
-        $beast->addStat($strength);
-        $defence = new Stat("Defence");
-        $defence->setBoundaries(40, 60);
-        $beast->addStat($defence);
-        $speed = new Stat("Speed");
-        $speed->setBoundaries(40, 60);
-        $beast->addStat($speed);
-        $luck = new Stat("Luck");
-        $luck->setBoundaries(25, 40);
-        $beast->addStat($luck);
-
-        $player = new Player("CPU");
-        $player->setCharacter($beast);
-
-        return $player;
-    }
-
-    public function initializePlayer()
-    {
-        $orderus = new Character("Orderus");
-        $health = new Stat("Health");
-        $health->setBoundaries(70, 100);
-        $orderus->addStat($health);
-        $strength = new Stat("Strength");
-        $strength->setBoundaries(70, 80);
-        $orderus->addStat($strength);
-        $defence = new Stat("Defence");
-        $defence->setBoundaries(45, 55);
-        $orderus->addStat($defence);
-        $speed = new Stat("Speed");
-        $speed->setBoundaries(45, 50);
-        $orderus->addStat($speed);
-        $luck = new Stat("Luck");
-        $luck->setBoundaries(10, 30);
-        $orderus->addStat($luck);
-
-        $player = new Player("CPU");
-        $player->setCharacter($orderus);
-        return $player;
-    }
-
     public function __construct()
     {
-        $this->battle = new Battle();
-        $this->battle->addPlayer($this->initializeCPU());
-        $this->battle->addPlayer($this->initializePlayer());
-        $this->battle->setNumberOfRounds(10);
+        $this->battle = new Battle(10);
+
+        $player1 = new Player("CPU");
+        $player1->setCharacter(new Beast());
+        $this->battle->addPlayer($player1);
+
+        $player2 = new Player("Player");
+        $player2->setCharacter(new Orderus());
+
+        // $magicShield = new MagicShield();
+        // $magicShield->equip($player2->character);
+        // $rapidStrike = new RapidStrike();
+        // $rapidStrike->equip($player2->character);
+
+        $this->battle->addPlayer($player2);
     }
 
     public function load()
     {
         $winner = $this->battle->start();
 
+        $roundCounter = 1;
         foreach ($this->battle->rounds as $round) {
-            echo "<strong>Round details</strong> <br/>";
+            echo "<strong>Round {$roundCounter} details</strong> <br/>";
             foreach ($round->turns as $turn) {
                 echo "Turn details:<br/>";
                 echo  $turn->attacker->name . " attacked " . $turn->defender->name . ".<br/>";
@@ -80,6 +48,7 @@ class Game
                 }
                 echo "<br/>";
             }
+            $roundCounter++;
         }
 
         echo "Winner is " . $winner->name . "</br>";

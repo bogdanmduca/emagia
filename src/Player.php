@@ -2,6 +2,8 @@
 
 namespace Emagia;
 
+use Emagia\Characters\Character;
+
 class Player
 {
     public $name;
@@ -10,7 +12,6 @@ class Player
     public function __construct(string $name = "Player")
     {
         $this->name = $name;
-        $this->character = new Character("Beast");
     }
 
     public function setCharacter(Character $character)

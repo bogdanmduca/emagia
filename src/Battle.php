@@ -12,24 +12,22 @@ class Battle
     public $numberOfRounds = 10;
     public $rounds = [];
 
+    public function __construct(int $rounds)
+    {
+        if ($rounds <= 0)
+            throw new OutOfRangeException("Number of rounds must be higher than zero");
+        $this->numberOfRounds = $rounds;
+    }
     public function addPlayer(Player $player)
     {
         $this->players[] = $player;
     }
 
-    public function setNumberOfRounds(int $number)
-    {
-        if ($number <= 0)
-            throw new OutOfRangeException("Number of rounds must be higher than zero");
-        $this->numberOfRounds = $number;
-    }
-
-
     public function start()
     {
+        $this->initalizeCharacterStats();
+
         $this->decideWhoAttacks();
-        $this->initalizeCharacterStats($this->attacker->character);
-        $this->initalizeCharacterStats($this->defender->character);
 
         for ($i = 1; $i <= $this->numberOfRounds; $i++) {
             $round = new Round();
@@ -38,46 +36,46 @@ class Battle
 
             $this->rounds[] = $round;
 
-            if ($this->defender->character->stats['Health']->value < 0) {
+            if ($this->defender->character->health->getValue()  < 0) {
                 return $this->attacker;
             }
 
-            if ($this->attacker->character->stats['Health']->value < 0) {
+            if ($this->attacker->character->health->getValue()  < 0) {
                 return $this->defender;
             }
         }
 
-        if ($this->attacker->character->health > $this->defender->character->health)
+        if ($this->attacker->character->health->getValue() > $this->defender->character->health->getValue())
             return $this->attacker;
 
         return $this->defender;
     }
 
-    public function initalizeCharacterStats(&$character)
+    public function initalizeCharacterStats()
     {
-        foreach ($character->stats as $stat) {
-            $stat->value = rand($stat->lowerBound, $stat->upperBound);
+        foreach ($this->players as $player) {
+            $player->character->setStats();
         }
-        // $character->health = rand($character->health->lowerBound, $character->health->upperBound);
-        // $character->strength = rand($character->strength->lowerBound, $character->strength->upperBound);
-        // $character->defence = rand($character->defence->lowerBound, $character->defence->upperBound);
-        // $character->speed = rand($character->speed->lowerBound, $character->speed->upperBound);
-        // $character->luck = rand($character->luck->lowerBound, $character->luck->upperBound);
     }
 
     public function decideWhoAttacks()
     {
-        $this->attacker = $this->players[0];
-        $this->defender = $this->players[1];
+        $attacker = $this->players[0];
+        $defender = $this->players[1];
 
-        // foreach ($this->players as $player) {
-        //     if ($player->character->speed > $this->attacker->character->speed)
-        //         $this->attacker = $player;
-        //     elseif ($player->character->speed = $this->attacker->character->speed) {
-        //         if ($player->character->luck >= $this->attacker->character->luck) {
-        //             $this->attacker = $player;
-        //         }
-        //     }
-        // }
+        if ($defender->character->speed->getValue() > $attacker->character->speed->getValue()) {
+            $permutation = $defender;
+            $defender = $attacker;
+            $attacker = $permutation;
+        } elseif ($defender->character->speed->getValue() === $attacker->character->speed->getValue()) {
+            if ($defender->character->luck->getValue() >= $attacker->character->luck->getValue()) {
+                $permutation = $defender;
+                $defender = $attacker;
+                $attacker = $permutation;
+            }
+        }
+
+        $this->attacker = $attacker;
+        $this->defender = $defender;
     }
 }
