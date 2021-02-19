@@ -55,6 +55,12 @@ class Battle
     {
         foreach ($this->players as $player) {
             $player->character->setStats();
+            echo "<br/>" . $player->character->name . " stats:<br/>";
+            echo "Health " . $player->character->health->baseValue . "<br/>";
+            echo "Strength " . $player->character->strength->baseValue . "<br/>";
+            echo "Defence " . $player->character->defence->baseValue . "<br/>";
+            echo "Speed " . $player->character->speed->baseValue . "<br/>";
+            echo "Luck " . $player->character->luck->baseValue . "<br/>";
         }
     }
 

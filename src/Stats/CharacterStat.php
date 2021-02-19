@@ -10,7 +10,7 @@ class CharacterStat
     public $upperBound = null;
     public $baseValue = 0;
     protected $statModifiers = [];
-    protected $isDirty = true;
+    // protected $isDirty = true;
     protected $value;
     protected $lastBaseValue = 0.0;
 
@@ -30,7 +30,7 @@ class CharacterStat
 
     public function addModifier(StatModifier $statModifier)
     {
-        $this->isDirty = true;
+        // $this->isDirty = true;
         $this->statModifiers[] = $statModifier;
 
         usort($this->statModifiers, function ($a, $b) {
@@ -45,7 +45,7 @@ class CharacterStat
     public function removeModifier(StatModifier $statModifier)
     {
         if (array_key_exists($statModifier, $this->statModifiers)) {
-            $this->isDirty = true;
+            // $this->isDirty = true;
             unset($this->statModifiers[$statModifier]);
             return true;
         }
@@ -58,7 +58,7 @@ class CharacterStat
 
         for ($i = count($this->statModifiers) - 1; $i >= 0; $i++) {
             if ($this->statModifiers[$i]->source == $source) {
-                $this->isDirty = true;
+                // $this->isDirty = true;
                 $didRemove = false;
                 unset($this->statModifiers[$i]);
             }
@@ -69,11 +69,13 @@ class CharacterStat
 
     public function getValue()
     {
-        if ($this->isDirty || $this->baseValue != $this->lastBaseValue) {
-            $this->lastBaseValue = $this->baseValue;
-            $this->value = $this->calculateFinalValue();
-            $this->isDirty = false;
-        }
+        $this->value = $this->calculateFinalValue();
+
+        // if ($this->isDirty || $this->baseValue != $this->lastBaseValue) {
+        //     $this->lastBaseValue = $this->baseValue;
+        //     $this->value = $this->calculateFinalValue();
+        //     $this->isDirty = false;
+        // }
         return $this->value;
     }
 
@@ -83,18 +85,19 @@ class CharacterStat
         $sumPercentAdd = 0;
 
         for ($i = 0; $i < count($this->statModifiers); $i++) {
-
-            $modifier = $this->statModifiers[$i];
-            if ($modifier->type === StatModType::Flat) {
-                $finalValue += $modifier->value;
-            } elseif ($modifier->type === StatModType::PercentAdd) {
-                $sumPercentAdd += $modifier->value;
-                if ($i + 1 >= count($this->statModifiers) || $this->statModifiers[$i + 1]->type != StatModType::PercentAdd) {
-                    $finalValue *= 1 + $sumPercentAdd;
-                    $sumPercentAdd = 0;
+            if ($this->statModifiers[$i]->shouldBeUsed()) {
+                $modifier = $this->statModifiers[$i];
+                if ($modifier->type === StatModType::Flat) {
+                    $finalValue += $modifier->value;
+                } elseif ($modifier->type === StatModType::PercentAdd) {
+                    $sumPercentAdd += $modifier->value;
+                    if ($i + 1 >= count($this->statModifiers) || $this->statModifiers[$i + 1]->type != StatModType::PercentAdd) {
+                        $finalValue *= 1 + $sumPercentAdd;
+                        $sumPercentAdd = 0;
+                    }
+                } else if ($modifier->type === StatModType::PercentMult) {
+                    $finalValue *= 1 + $modifier->value;
                 }
-            } else if ($modifier->type === StatModType::PercentMult) {
-                $finalValue *= 1 + $modifier->value;
             }
         }
 

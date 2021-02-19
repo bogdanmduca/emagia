@@ -22,10 +22,10 @@ class Game
         $player2 = new Player("Player");
         $player2->setCharacter(new Orderus());
 
-        // $magicShield = new MagicShield();
-        // $magicShield->equip($player2->character);
-        // $rapidStrike = new RapidStrike();
-        // $rapidStrike->equip($player2->character);
+        $magicShield = new MagicShield();
+        $magicShield->equip($player2->character);
+        $rapidStrike = new RapidStrike();
+        $rapidStrike->equip($player2->character);
 
         $this->battle->addPlayer($player2);
     }
@@ -34,24 +34,24 @@ class Game
     {
         $winner = $this->battle->start();
 
-        $roundCounter = 1;
-        foreach ($this->battle->rounds as $round) {
-            echo "<strong>Round {$roundCounter} details</strong> <br/>";
-            foreach ($round->turns as $turn) {
-                echo "Turn details:<br/>";
-                echo  $turn->attacker->name . " attacked " . $turn->defender->name . ".<br/>";
-                echo  $turn->attacker->name . " inflicted " . $turn->damage . " damage.<br/>";
-                if ($turn->defenderLife > 0)
-                    echo  $turn->defender->name . " was left with " . $turn->defenderLife . " health.<br/>";
-                else {
-                    echo  $turn->defender->name . " was killed by " . $turn->attacker->name . "<br/>";
-                }
-                echo "<br/>";
-            }
-            $roundCounter++;
-        }
+        // $roundCounter = 1;
+        // foreach ($this->battle->rounds as $round) {
+        //     echo "<strong>Round {$roundCounter} details</strong> <br/>";
+        //     foreach ($round->turns as $turn) {
+        //         echo "Turn details:<br/>";
+        //         echo  $turn->attacker->name . " attacked " . $turn->defender->name . ".<br/>";
+        //         echo  $turn->attacker->name . " inflicted " . $turn->damage . " damage.<br/>";
+        //         if ($turn->defenderLife > 0)
+        //             echo  $turn->defender->name . " was left with " . $turn->defenderLife . " health.<br/>";
+        //         else {
+        //             echo  $turn->defender->name . " was killed by " . $turn->attacker->name . "<br/>";
+        //         }
+        //         echo "<br/>";
+        //     }
+        //     $roundCounter++;
+        // }
 
-        echo "Winner is " . $winner->name . "</br>";
-        echo "Refresh to start again <br/>";
+        // echo "Winner is " . $winner->name . "</br>";
+        // echo "Refresh to start again <br/>";
     }
 }

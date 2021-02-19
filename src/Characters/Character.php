@@ -2,6 +2,8 @@
 
 namespace Emagia\Characters;
 
+use Emagia\Stats\CharacterStat;
+
 class Character
 {
     public $name;
@@ -12,9 +14,20 @@ class Character
     public $speed;
     public $luck;
 
-    public function __construct(string $name)
-    {
+    public function __construct(
+        string $name,
+        CharacterStat $health,
+        CharacterStat $strength,
+        CharacterStat $defence,
+        CharacterStat $speed,
+        CharacterStat $luck
+    ) {
         $this->name = $name;
+        $this->health = $health;
+        $this->strength  = $strength;
+        $this->defence = $defence;
+        $this->speed = $speed;
+        $this->luck = $luck;
     }
 
     public function setStats()
@@ -26,17 +39,12 @@ class Character
         $this->luck->setBaseValue();
     }
 
-    public function isLucky()
-    {
-        return rand(0, 1);
-    }
-
     /**
      * Calculates the total attack strength
      */
     public function attack()
     {
-        echo "{$this->name} attacks. <br/>";
+        echo "<br/>{$this->name} attacks. ";
 
         return $this->strength->getValue();
     }
@@ -51,13 +59,14 @@ class Character
 
     public function takeDamage($attack)
     {
-        $damage = $attack - $this->defence();
+        echo "<br/>{$this->name} defends. ";
 
-        if($this->isLucky() == 1){
-            $damage = 0;
+        if (isLucky($this->luck->getValue())) {
             echo "{$this->name} got lucky. No damage taken. <br/>";
-            return $damage;
+            return 0;
         }
+
+        $damage = $attack - $this->defence();
 
         if ($damage > 0) {
             $this->health->baseValue -= $damage;
@@ -67,16 +76,18 @@ class Character
 
         echo "{$this->name} takes {$damage} damage. ";
 
-        if ($this->health->baseValue  <= 0){
-            $this->die(); 
+        if ($this->health->baseValue  <= 0) {
+            $this->die();
             return $damage;
         }
 
-        echo "Health left {$this->health->baseValue }. <br/>"; 
+        echo "Health left {$this->health->baseValue}. <br/>";
         return $damage;
     }
 
-    public function die(){
-       echo "{$this->name} is dead. <br/>";
+    public function die()
+    {
+        //    echo "{$this->name} is dead. <br/>";
+        die("{$this->name} is dead. <br/>");
     }
 }
